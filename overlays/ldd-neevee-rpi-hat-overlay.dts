@@ -1,0 +1,98 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2835";
+    
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+			leds: leds {
+				compatible = "gpio-leds";
+                
+				led0: led0-red {
+					label = "red";
+					gpios = <&gpio 22 0>;
+					default-state = "on";
+					linux,default-trigger = "none";
+				};
+                
+				led1: led1-green {
+					label = "green";
+					gpios = <&gpio 23 0>;
+					default-state = "on";
+					linux,default-trigger = "none";
+				};
+                
+				led2: led2-blue {
+					label = "blue";
+					gpios = <&gpio 24 0>;
+					default-state = "on";
+					linux,default-trigger = "none";
+				};
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&i2c1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			temp_hum: temp-hum@40 {
+				compatible = "silabs,si7020";
+				reg = <0x40>;
+				status = "okay";
+			};
+
+			acc_mma8652: acc-mma8652@1d {
+				compatible = "fsl,mma8652";
+				reg = <0x1d>;
+				interrupt-parent = <&gpio>;
+                                interrupts = <6 2>;
+                                status = "okay";
+			};
+                                
+			dac_mcp4725: dac-mcp4725@64 {
+                                compatible = "microchip,mcp4725";
+                                reg = <0x64>;
+                                status = "okay";
+        		};
+        		
+			amb_bh1745: bh1745@38 {
+                                compatible = "rohm,bh1750";
+                                reg = <0x38>;
+                                status = "okay";
+                        };
+                        
+                        tca8418_keypad: tca8418_keypad@34 {
+                                compatible = "ti,tca8418";
+                                reg = <0x34>;
+                                interrupt-parent = <&gpio>;
+                                interrupts = <5 4>;
+                                keypad,num-rows = <4>;
+                                keypad,num-columns = <4>;
+                                linux,keymap = <
+                                        0x00000031 
+                                        0x00010032 
+                                        0x00020033 
+                                        0x00030041 
+                                        0x01000034 
+                                        0x01010035 
+                                        0x01020036 
+                                        0x01030042 
+                                        0x02000037 
+                                        0x02010038 
+                                        0x02020039 
+                                        0x02030043 
+                                        0x0300002A 
+                                        0x03010030 
+                                        0x03020023 
+                                        0x03030044 
+                                        >;
+                                status = "okay";
+                        };
+    		};
+	};
+};
